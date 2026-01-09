@@ -1,17 +1,60 @@
-AWS Weather Monitoring System
+# AWS Weather Monitoring System
 
-This project implements a real-time weather monitoring and alert system based on geographic coordinates (latitude and longitude). Weather data is collected from the Tomorrow.io API and processed using AWS services. The system performs continuous monitoring and generates alerts when specific weather conditions are detected.
+Simple cloud-based project developed for academic and hands-on purposes,  
+demonstrating event-driven architecture, API integration, automation, and AWS cost-aware usage.
 
-The data collection process is handled by an AWS Lambda function executed on a scheduled basis. This function consumes real weather data from the Tomorrow.io API using a predefined latitude and longitude as input and sends the collected information to an Amazon Kinesis Data Stream.
+## Technologies
+- AWS Lambda  
+- Amazon Kinesis Data Streams  
+- Amazon S3  
+- Amazon SNS (Email and SMS notifications)  
+- AWS IAM  
+- AWS Glue  
+- Amazon Athena  
+- Amazon CloudWatch  
+- Python  
+- Tomorrow.io API  
 
-Amazon Kinesis acts as an event broker, enabling real-time streaming and processing of the weather data. A consumer Lambda function processes the incoming stream in near real time, analyzes weather conditions and publishes alert events to an Amazon SNS topic whenever predefined thresholds are met.
+## Project Workflow (Step by Step)
+1. **Weather data collection**  
+   - An AWS Lambda function (producer) runs automatically based on a schedule configured with CloudWatch.  
+   - This function consumes real weather data from the Tomorrow.io API, using a predefined latitude and longitude as input.  
 
-Amazon SNS is responsible for delivering weather alerts automatically to the user via email and SMS using the contacts registered in the AWS environment. These notifications are triggered based on the analysis performed during the real-time processing stage.
+2. **Streaming data ingestion**  
+   - The collected data is sent to an Amazon Kinesis Data Stream, which acts as an event broker, enabling continuous data processing.  
 
-In parallel, a batch consumer Lambda function processes the same data stream and stores the weather data in an Amazon S3 bucket, creating a historical dataset. This stored data is cataloged using an AWS Glue Crawler, allowing structured access through the AWS Glue Data Catalog.
+3. **Real-time processing and alerts**  
+   - A second AWS Lambda function (consumer_realtime) consumes data directly from the Kinesis stream.  
+   - This function analyzes weather conditions and, when predefined alert conditions are met, publishes a message to an Amazon SNS topic.  
+   - SNS sends automatic alerts via email and SMS to the contacts registered in the AWS environment.  
 
-Once cataloged, the data can be queried using Amazon Athena, enabling SQL-based analysis and validation of the collected meteorological information.
+4. **Batch processing and data storage**  
+   - In parallel with real-time processing, an AWS Lambda function (consumer_batch) processes the data for storage.  
+   - Weather data is stored in an Amazon S3 bucket, creating a historical dataset for future analysis.  
 
-Security and access control are managed using AWS IAM, ensuring that each service and function operates with the minimum required permissions.
+5. **Data cataloging and analysis**  
+   - An AWS Glue Crawler catalogs the data stored in S3 into the Glue Data Catalog.  
+   - Once cataloged, the data can be queried using Amazon Athena, allowing SQL-based analysis and validation of the collected data.  
 
-This project was developed as part of a hands-on AWS course with the goal of consolidating practical knowledge in cloud architecture, event-driven systems, automation, streaming data and external API integration. All AWS resources were provisioned, tested and later deactivated to avoid recurring costs. The repository contains the full source code and real screenshots of the AWS environment during the execution of the project.
+6. **Security and access control**  
+   - The project uses AWS IAM to manage permissions, ensuring that each service and function has access only to the required resources, following the principle of least privilege.  
+
+## User Notifications
+The system sends real weather alerts automatically:  
+- 📧 Via email  
+- 📱 Via SMS  
+
+Notifications are triggered whenever specific weather conditions are detected during real-time data processing.  
+
+## Important Notes
+- This project was developed based on a hands-on AWS course, with the goal of consolidating knowledge in cloud architecture, automation, streaming data, and external API integration.  
+- All AWS resources were provisioned, tested, and later deactivated to avoid recurring costs.  
+- This repository contains the full source code, documentation, and real screenshots from the AWS environment during the project execution.  
+
+## Evidence
+The `aws-weather-monitoring/screenshots_proof/` directory contains real screenshots of the project in operation, including:  
+- Amazon Athena queries and results  
+- AWS Lambda executions  
+- Active Kinesis Data Stream  
+- S3 data structure  
+- SNS notification configuration  
