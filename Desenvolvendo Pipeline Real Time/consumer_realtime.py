@@ -5,10 +5,9 @@ import boto3
 
 sns_client = boto3.client('sns')
 
-# Substitua pelo ARN do seu tópico SNS
-SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:090656015375:snsalerta'
+SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:996345187987:snsalerta'
 
-# Ler valores das variáveis de ambiente
+#read ambient variables
 PRECIPITATION_PROBABILITY_THRESHOLD = int(os.environ.get('PRECIPITATION_PROBABILITY', 10))
 WIND_SPEED_THRESHOLD = int(os.environ.get('WIND_SPEED', 10))
 WIND_GUST_THRESHOLD = int(os.environ.get('WIND_GUST', 10))
@@ -23,17 +22,17 @@ def lambda_handler(event, context):
         }
 
     for record in event['Records']:
-        # O dado do Kinesis está codificado em base64, então precisa ser decodificado
+        #decode Kinesis' x64 data
         payload = base64.b64decode(record['kinesis']['data']).decode('utf-8')
         data = json.loads(payload)
 
-        # Extrair os valores relevantes
+        #extract relevant values
         precipitation_probability = data['data']['values'].get('precipitationProbability', 0)
         wind_speed = data['data']['values'].get('windSpeed', 0)
         wind_gust = data['data']['values'].get('windGust', 0)
         rain_intensity = data['data']['values'].get('rainIntensity', 0)
 
-        # Verificar se algum dos valores excede os limites configurados
+        #check if any value exceeds the configured limit
         if (precipitation_probability >= PRECIPITATION_PROBABILITY_THRESHOLD or
                 wind_speed >= WIND_SPEED_THRESHOLD or
                 wind_gust >= WIND_GUST_THRESHOLD or
@@ -58,3 +57,4 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': json.dumps('Processed Kinesis records and sent to SNS if thresholds exceeded')
     }
+
